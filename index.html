@@ -141,12 +141,25 @@
     <p><i>Cut through the noise. Learn real strategies that work.</i></p>
   </header>
 
-  <section class="cta">
-    <form>
-      <input type="email" placeholder="Enter your email" required />
-      <button type="submit">Get Started</button>
-    </form>
-  </section>
+<section class="cta">
+  <form id="emailForm">
+    <input type="email" id="emailInput" placeholder="Enter your email" required />
+    <button type="submit">Get Started</button>
+  </form>
+  <p id="message" style="margin-top: 1rem; color: white; font-weight: bold;"></p>
+</section>
+
+<script>
+  document.getElementById("emailForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Stop form from reloading page
+    const email = document.getElementById("emailInput").value;
+    if (email) {
+      document.getElementById("message").textContent = "Site still a work in progress — we'll be live soon.";
+      document.getElementById("emailForm").reset();
+    }
+  });
+</script>
+
 
   <section class="features">
     <h2>What You'll Get:</h2>
