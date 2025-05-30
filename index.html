@@ -21,33 +21,42 @@
       background-attachment: fixed;
     }
     header {
-      padding: 2rem;
+      padding: 2rem 1rem;
       text-align: center;
       position: relative;
       width: 100%;
+      box-sizing: border-box;
     }
     header img.logo {
       position: absolute;
       top: 1rem;
       right: 1rem;
-      width: 100px;
+      width: 80px;
       height: auto;
     }
     header h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
       margin: 0;
     }
     header p {
       margin-top: 1rem;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #000000;
     }
     .cta {
-      margin: 2rem 0;
+      margin: 2rem 1rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .cta form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .cta input[type="email"] {
       padding: 0.75rem;
-      width: 250px;
+      flex: 1;
+      min-width: 200px;
       border: none;
       border-radius: 4px 0 0 4px;
       outline: none;
@@ -76,6 +85,13 @@
       margin: 1rem 0;
       font-size: 1.1rem;
     }
+
+    .gif img {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      
+    }
     .telegram {
       text-align: center;
       padding: 2rem 1rem;
@@ -91,6 +107,30 @@
       padding: 1rem;
       font-size: 0.9rem;
       color: #555;
+      test-align: center;
+    }
+    @media (max-width: 600px) {
+  header img.logo {
+    width: 60px;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  header h1 {
+    font-size: 1.6rem;
+  }
+
+  .cta input[type="email"],
+  .cta button {
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .cta form {
+    flex-direction: column;
+    align-items: stretch;
+  }
     }
   </style>
 </head>
