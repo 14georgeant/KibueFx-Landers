@@ -39,6 +39,16 @@
       color: green;
       text-align: center;
     }
+   .fullscreen-gif {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: url('assets/bg.gif') no-repeat center center fixed;
+  background-size: cover;
+  z-index: -1;
+}
+
   </style>
 </head>
 <body>
@@ -70,6 +80,14 @@
         document.getElementById("signupForm").reset();
       }
     });
+   <body>
+  <div class="fullscreen-gif"></div>
+
+  <form id="signupForm">
+    <!-- your form elements -->
+  </form>
+</body>
+
   </script>
 
 </body>
