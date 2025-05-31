@@ -15,33 +15,36 @@
       font-family: Arial, sans-serif;
       background: #111;
       color: white;
-      padding: 2rem;
+      padding: 1rem;
     }
 
     .glossary-container {
-      max-width: 800px;
+      max-width: 100%;
+      width: 90%;
       margin: 0 auto;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
+      font-size: clamp(1.5rem, 5vw, 2rem);
     }
 
     input[type="text"] {
       width: 100%;
       padding: 0.75rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       border: none;
       border-radius: 8px;
       background: #222;
       color: white;
+      font-size: clamp(0.9rem, 3vw, 1rem);
     }
 
     .term {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      border-left: 5px solid #007bff;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border-left: 4px solid #007bff;
       background: #1c1c1c;
       border-radius: 4px;
     }
@@ -49,24 +52,27 @@
     .term h3 {
       margin-bottom: 0.5rem;
       color: #66d9ef;
+      font-size: clamp(1.1rem, 3.5vw, 1.2rem);
     }
 
     .term p {
       color: #ccc;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      line-height: 1.4;
     }
 
     #nextButton {
       display: block;
       width: 100%;
       max-width: 200px;
-      margin: 2rem auto 0;
-      padding: 1rem;
+      margin: 1.5rem auto 0;
+      padding: 0.75rem;
       background: #007bff;
       color: white;
       border: none;
       border-radius: 8px;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: clamp(0.9rem, 3vw, 1rem);
       cursor: pointer;
       transition: background 0.3s ease;
     }
@@ -80,6 +86,36 @@
       text-align: center;
       color: lightgreen;
       font-weight: bold;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+      }
+
+      .glossary-container {
+        width: 95%;
+      }
+
+      h1 {
+        margin-bottom: 1rem;
+      }
+
+      input[type="text"] {
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .term {
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      #nextButton {
+        max-width: 150px;
+        padding: 0.5rem;
+      }
     }
   </style>
 </head>
@@ -95,16 +131,50 @@
 
   <script>
     const glossary = [
-      { term: "Pip", definition: "A pip is the smallest price change of a given exchange rate. Usually the 4th decimal for most pairs, 2nd for JPY pairs." },
-      { term: "Lot", definition: "A lot represents a standardized quantity of the base currency. Standard = 100,000 units, Mini = 10,000, Micro = 1,000." },
-      { term: "Margin", definition: "Collateral needed to open a position. Allows use of leverage." },
-      { term: "Spread", definition: "Difference between bid and ask prices. It represents the broker's fee." },
-      { term: "Leverage", definition: "Allows traders to control larger positions than their capital. E.g., 100:1 leverage lets you control $100,000 with $1,000." },
-      { term: "Stop-Loss", definition: "Order to automatically close a trade at a predetermined loss level." },
-      { term: "Take-Profit", definition: "Order to close a trade once a certain profit level is reached." },
-      { term: "Bid", definition: "The price at which the broker is willing to buy the base currency." },
-      { term: "Ask", definition: "The price at which the broker is willing to sell the base currency." },
-      { term: "Equity", definition: "Total value of your trading account including unrealized profits/losses." }
+      { term: "Account Currency", definition: "The currency chosen for a trading account, into which all profits, losses, and fees are converted. For example, if the account is in USD but funds are transferred in EUR, they are converted to USD at the inter-bank rate. Options include USD, EUR, GBP, JPY, CHF, AUD, HUF, PLN, or RUB." },
+      { term: "Ask Price (Offer Price)", definition: "The price at which a trader can buy the base currency in a currency pair, shown on the right side of a quote. For example, in EUR/USD at 1.1965/1.1967, the ask price is 1.1967, meaning 1 euro costs 1.1967 US dollars. It is always higher than the bid price." },
+      { term: "Bid Price", definition: "The price at which a trader can sell the base currency in a currency pair, shown on the left side of a quote. For example, in EUR/USD at 1.4568/1.4570, the bid price is 1.4568 for selling the pair. It is always lower than the ask price." },
+      { term: "Close a Position", definition: "Exiting an open trade to realize profit or loss. For example, closing a long EUR/USD position after the euro rises locks in the profit by selling the currency." },
+      { term: "Contract Sizes (Lots)", definition: "Standardized trading amounts in forex, measured in lots. A standard lot is 100,000 units of the base currency, a mini lot is 10,000 units, and a micro lot is 1,000 units. For example, buying 1 standard lot of EUR/USD at 1.3125 means purchasing 100,000 euros and selling 131,250 US dollars." },
+      { term: "Country Risk", definition: "The risk that a government restricts or controls its currency’s flow, impacting forex trading. This risk is higher with exotic currencies than with freely traded major currencies." },
+      { term: "Credit Risk", definition: "The risk that one party in a forex transaction, such as a bank, fails to honor their debt at deal closure, often due to insolvency. Regulated exchanges minimize this risk." },
+      { term: "Currency Pair", definition: "A quotation of one currency against another, showing their relative value. The first currency is the base, the second is the quote. For example, EUR/USD at 1.3500 means 1 euro equals 1.35 US dollars. The pair is treated as a single unit for transactions." },
+      { term: "Equity", definition: "The total value of a trading account, including deposits, profits, and losses. For example, a $10,000 deposit plus a $3,000 profit results in $13,000 equity." },
+      { term: "Exchange Rate", definition: "The rate at which one currency is exchanged for another, showing how much quote currency is needed for one unit of base currency. For example, EUR/USD = 1.3115 means 1 euro equals 1.3115 US dollars. Rates fluctuate based on economic and social factors." },
+      { term: "Exchange Rate Risk", definition: "The risk of rapid currency price fluctuations during trading, which can cause significant losses unless mitigated by stop-loss orders." },
+      { term: "Execution", definition: "The process of completing a trade order. Orders are sent to a broker, who fills, rejects, or re-quotes them. Fast execution (under 1 second) is critical in forex to avoid losses. Some brokers maintain a no-rejections, no-re-quotes policy." },
+      { term: "Fractional Pip (Pipette)", definition: "An extra decimal place in an exchange rate for greater pricing precision. For non-JPY pairs, it’s five decimal places (e.g., 1.23456 vs. 1.2345); for JPY pairs, it’s three (e.g., 123.456 vs. 123.45). Also called a tenth pip." },
+      { term: "Fraud", definition: "The risk of deceptive practices by some brokers, though reduced by regulations. Traders should verify brokers’ registration with bodies like the CFTC or NFA and affiliations with reputable financial institutions." },
+      { term: "Free Margin", definition: "The amount of money in a trading account available for new positions, calculated as Equity minus Used Margin. For example, with $13,000 equity and $2,000 used margin, free margin is $11,000." },
+      { term: "Good For the Day (GFD)", definition: "An order active until the end of the trading day, typically 5 PM EST in the 24-hour forex market. Confirm the exact time with the broker." },
+      { term: "Good till Canceled (GTC)", definition: "An order to buy or sell at a set price, active until the trader cancels it or it’s executed. Most forex brokers default to GTC, but traders must track these orders." },
+      { term: "Interest Rate Risk", definition: "The risk from differences in interest rates between the two currencies in a pair, affecting trade profitability." },
+      { term: "Leverage", definition: "A broker’s loan allowing traders to control larger positions with less capital. For example, 100:1 leverage means $1,000 controls $100,000. It varies (e.g., 50:1, 100:1, 500:1) and amplifies both gains and losses. Margin secures the loan." },
+      { term: "Limit Order", definition: "An order to buy below or sell above the current market price, executed only at the specified price or better to avoid slippage. For example, with EUR/USD at 1.34, a buy limit at 1.33 or sell limit at 1.35 ensures execution at those levels or better." },
+      { term: "Liquidity Risk", definition: "The risk of reduced liquidity in a currency pair, often due to unexpected economic or political events, causing sharp or volatile price movements (fast market conditions)." },
+      { term: "Long Position", definition: "Buying the base currency, expecting it to rise in value. For example, in a long EUR/USD position, the trader buys euros, anticipating an increase against the USD." },
+      { term: "Margin", definition: "The minimum funds, as a percentage, required to open or maintain a position. For example, a 1% margin means $1,000 is needed to trade $100,000. Margin acts as collateral for leveraged trades, not as currency payment." },
+      { term: "Margin Call", definition: "A broker’s notification when equity falls below a required margin level (e.g., 50%) due to adverse market movements. Additional funds are needed to maintain positions, or they may be liquidated. Stop orders help avoid this." },
+      { term: "Market Order (Entry Order)", definition: "An order to buy or sell a currency pair instantly at the best available market price, prioritizing execution over price certainty. For example, at EUR/USD 1.4030, a market order aims for that price but may fill at a slightly different price." },
+      { term: "Market Risk", definition: "The risk of losses from price movements in a currency pair, driven by economic or political changes." },
+      { term: "One Cancels the Other (OCO)", definition: "Two orders on either side of the current market price (e.g., a sell limit and sell stop). If one is executed, the other is canceled, preventing unintended fills in volatile markets." },
+      { term: "Open Order", definition: "An order to buy or sell a financial instrument that remains active until manually closed by the trader or broker." },
+      { term: "Pip", definition: "The smallest price change in a currency pair’s exchange rate, usually the fourth decimal for most pairs (e.g., EUR/USD from 1.2550 to 1.2551 is 1 pip) or second decimal for JPY pairs (e.g., USD/JPY from 86.50 to 86.51). Fractional pips offer more precision." },
+      { term: "Pip Value", definition: "The monetary value of a 1-pip movement, varying by pair and account currency. For example, in USD/JPY with a USD account, 1 pip for a standard lot (100,000 units) at 130.46 is $7.7 (100,000 × 0.01 JPY ÷ 130.46). For EUR/USD, 1 pip is $0.0001 per unit, so a micro lot (1,000 units) yields $0.10 per pip." },
+      { term: "Position", definition: "An open trade held for a period, either long (buying) or short (selling) the base currency." },
+      { term: "Profit/Loss Calculation", definition: "Determining gains or losses from a trade. For example, buying 1 standard lot of USD/CHF at 1.4530 and selling at 1.4550 yields a 20-pip gain. Profit = 100,000 × 0.0001 CHF × 20 pips = CHF 200, converted to USD ($137.46 at USD/CHF = 1.4550). Account for bid/ask spread." },
+      { term: "Quote", definition: "The market price of a currency pair, showing bid (selling) and ask (buying) prices. For example, 1.23458/1.12347 displays the bid/ask prices." },
+      { term: "Re-quote", definition: "An unfair practice where a broker delays execution and offers a worse price than requested. Avoided by choosing brokers with a no-re-quotes policy or using limit orders." },
+      { term: "Rollover Adjustments (Carry Trade)", definition: "Interest adjustments on positions held overnight, based on the interest rate differential. For example, in a long EUR/USD position with a 1.75% EUR lend rate and 2% USD borrow rate, the trader pays 0.25% daily, typically adjusted at 5 PM EST." },
+      { term: "Short Position", definition: "Selling the base currency, expecting it to fall in value. For example, in a short EUR/USD position, the trader sells euros, anticipating a decline against the USD." },
+      { term: "Slippage", definition: "The difference between the expected and actual trade price, often in low-liquidity or volatile markets. For example, entering EUR/USD at 1.2910 but filling at 1.2912 results in 2 pips of slippage." },
+      { term: "Spread", definition: "The difference between bid and ask prices, measured in pips, representing brokerage costs. Spreads can be fixed (consistent) or variable (fluctuating with liquidity). For example, a 3-pip spread in EUR/USD means the ask is 3 pips higher than the bid." },
+      { term: "Stop-Loss Order (SL)", definition: "An order to close a trade at a specified loss level to limit losses. For example, a stop-loss at 1.4150 on a long EUR/USD position at 1.4210 caps loss at 60 pips. Can be automated." },
+      { term: "Stop-Entry Order", definition: "An order to buy above or sell below the current market price, expecting continued movement in that direction. For example, with EUR/USD at 1.34, a stop-entry to buy at 1.35 triggers if the price rises." },
+      { term: "Take Profit Order (TP)", definition: "An order to close a trade at a specified profit level, securing gains." },
+      { term: "Technology Risk/Internet Trading Risks", definition: "Risks from failures in hardware, software, or internet connections that disrupt trading, potentially causing losses." },
+      { term: "Trailing Stop Order", definition: "A stop order that adjusts dynamically to lock in profits while limiting losses. For example, a 20-pip trailing stop on a long EUR/USD at 1.3000 starts at 1.2980 and moves to 1.2981 if the market hits 1.3001, maintaining a 20-pip maximum loss." },
+      { term: "Used Margin", definition: "The amount of money reserved by the broker to keep current trading positions open, preventing a negative account balance." }
     ];
 
     function renderGlossary(filter = "") {
