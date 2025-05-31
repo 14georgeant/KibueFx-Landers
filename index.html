@@ -149,15 +149,8 @@
   <p id="message" style="margin-top: 1rem; color: white; font-weight: bold;"></p>
 </section>
   
-<script>
-  document.getElementById("emailForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Stop form from reloading page
-    const email = document.getElementById("emailInput").value;
-    if (email) {
-      document.getElementById("message").textContent = "Site still a work in progress — we'll be live soon.";
-      document.getElementById("emailForm").reset();
-    }
-  });
+<button onclick="location.href='signup.html'">Get Started</button>
+
 </script>
 
 
