@@ -54,22 +54,7 @@
 
     <p id="message"></p>
   </form>
-
- 
-        <script>
-    document.getElementById("signupForm").addEventListener("submit", function (e) {
-      e.preventDefault(); // Prevent page reload
-
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-
-      if (name && email) {
-        document.getElementById("message").textContent = 
-          "Site still a work in progress — we'll be live soon.";
-
-        // Optional: clear form
-        document.getElementById("signupForm").reset();
-      }
+   
     });
   
     };
