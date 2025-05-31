@@ -1,192 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KibueFx Landers</title>
+  <meta charset="UTF-8">
+  <title>KibueFx Glossary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #00BFFF; 
-      color: #000000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      background-image: url('Untitled%20design.png');
-      background-repeat: no-repeat;
-      background-position: fill;
-      background-size: 100%;
-      background-attachment: fixed;
-    }
-    header {
-      padding: 2rem 1rem;
-      text-align: center;
-      position: relative;
-      width: 100%;
+    * {
       box-sizing: border-box;
-    }
-    header img.logo {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      width: 80px;
-      height: auto;
-    }
-    header h1 {
-      font-size: 2rem;
       margin: 0;
-    }
-    header p {
-      margin-top: 1rem;
-      font-size: 1rem;
-      color: #000000;
-    }
-    .cta {
-      margin: 2rem 1rem;
-      width: 100%;
-      max-width: 400px;
-    }
-    .cta form {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .cta input[type="email"] {
-      padding: 0.7rem;
-      flex: 1;
-      min-width: 200px;
-      border: none;
-      border-radius: 4px 0 0 4px;
-      outline: none;
-    }
-    .cta button {
-      padding: 0.7rem 1rem;
-      border: none;
-      background-color: #0000FF;
-      color: white;
-      border-radius: 0 4px 4px 0;
-      cursor: pointer;
-    }
-    .features {
-      max-width: 800px;
-      text-align: center;
-      padding: 1rem;
-    }
-    .features h2 {
-      font-size: 1.5rem;
-    }
-    .features ul {
-      list-style: none;
       padding: 0;
     }
-    .features li {
-      margin: 1rem 0;
-      font-size: 1.1rem;
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      padding: 2rem;
     }
 
-    .gif img {
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-      
+    .glossary-container {
+      max-width: 800px;
+      margin: 0 auto;
     }
-    .telegram {
+
+    h1 {
       text-align: center;
-      padding: 2rem 1rem;
-      font-size: 1rem;
-      color: #000000;
+      margin-bottom: 2rem;
     }
-    .telegram a {
-      color: #0000000;
-      text-decoration: none;
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: white;
     }
-    footer {
-      margin-top: auto;
+
+    .term {
+      margin-bottom: 1.5rem;
       padding: 1rem;
-      font-size: 0.9rem;
-      color: #555;
-      test-align: center;
+      border-left: 5px solid #007bff;
+      background: #1c1c1c;
+      border-radius: 4px;
     }
-    @media (max-width: 600px) {
-  header img.logo {
-    width: 60px;
-    top: 0.5rem;
-    right: 0.5rem;
-  }
 
-  header h1 {
-    font-size: 1.6rem;
-  }
+    .term h3 {
+      margin-bottom: 0.5rem;
+      color: #66d9ef;
+    }
 
-  .cta input[type="email"],
-  .cta button {
-    border-radius: 4px;
-    margin-top: 0.5rem;
-    width: 80%;
-  }
+    .term p {
+      color: #ccc;
+    }
 
-  .cta form {
-    flex-direction: column;
-    align-items: center;
-  }
+    #nextButton {
+      display: block;
+      width: 100%;
+      max-width: 200px;
+      margin: 2rem auto 0;
+      padding: 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #nextButton:hover {
+      background: #0056b3;
+    }
+
+    #nextMessage {
+      margin-top: 1rem;
+      text-align: center;
+      color: lightgreen;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="KibueFx%20Landers.png" alt="KibueFx Logo" class="logo">
-    <h1>KibueFx Landers</h1>
-    <p><i>Cut through the noise. Learn real strategies that work.</i></p>
-  </header>
 
-<section class="cta">
-  <form id="emailForm">
-    <input type="email" id="emailInput" placeholder="Enter your email" required />
-    <button type="submit">Get Started</button>
-  </form>
-  <p id="message" style="margin-top: 1rem; color: white; font-weight: bold;"></p>
-</section>
+  <div class="glossary-container">
+    <h1>Forex Glossary</h1>
+    <input type="text" id="searchBox" placeholder="Search for a term...">
+    <div id="glossaryList"></div>
+    <button id="nextButton">Next</button>
+    <div id="nextMessage"></div>
+  </div>
 
-<script>
-  document.getElementById("emailForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevent real form submission
+  <script>
+    const glossary = [
+      { term: "Pip", definition: "A pip is the smallest price change of a given exchange rate. Usually the 4th decimal for most pairs, 2nd for JPY pairs." },
+      { term: "Lot", definition: "A lot represents a standardized quantity of the base currency. Standard = 100,000 units, Mini = 10,000, Micro = 1,000." },
+      { term: "Margin", definition: "Collateral needed to open a position. Allows use of leverage." },
+      { term: "Spread", definition: "Difference between bid and ask prices. It represents the broker's fee." },
+      { term: "Leverage", definition: "Allows traders to control larger positions than their capital. E.g., 100:1 leverage lets you control $100,000 with $1,000." },
+      { term: "Stop-Loss", definition: "Order to automatically close a trade at a predetermined loss level." },
+      { term: "Take-Profit", definition: "Order to close a trade once a certain profit level is reached." },
+      { term: "Bid", definition: "The price at which the broker is willing to buy the base currency." },
+      { term: "Ask", definition: "The price at which the broker is willing to sell the base currency." },
+      { term: "Equity", definition: "Total value of your trading account including unrealized profits/losses." }
+    ];
 
-    const email = document.getElementById("emailInput").value;
+    function renderGlossary(filter = "") {
+      const list = document.getElementById("glossaryList");
+      list.innerHTML = "";
+      glossary
+        .filter(entry => entry.term.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(entry => {
+          const div = document.createElement("div");
+          div.className = "term";
+          div.innerHTML = `<h3>${entry.term}</h3><p>${entry.definition}</p>`;
+          list.appendChild(div);
+        });
+    }
 
-    // Optional: Do something with the email (e.g., send to server, store in localStorage)
-    console.log("Captured email:", email);
+    document.getElementById("searchBox").addEventListener("input", function() {
+      renderGlossary(this.value);
+    });
 
-    // Redirect to the form page
-    window.location.href = "signup.html";
-  });
-  
-</script>
+    document.getElementById("nextButton").addEventListener("click", function () {
+      document.getElementById("nextMessage").textContent = "Site still a work in progress — we'll be live soon.";
+    });
 
+    renderGlossary();
+  </script>
 
-  <section class="features">
-    <h2>What You'll Get:</h2>
-    <ul>
-      <li>Market structure and price action insights</li>
-      <li>Risk management frameworks</li>
-      <li>Live trade examples and breakdowns</li>
-      <li>Exclusive access to trading communities</li>
-    </ul>
-  </section>
-  
-  <section class="gif">
-    <img src="g.gif" style="width: 100%; max-width: 600px; height: auto;" alt="Live GIF" />
-  </section>
-
-  <section class="telegram">
-    <p>For copyrighted book references and exclusive material, join our Telegram group:<br>
-    <a href="https://t.me/confidenttrading" target="_blank">t.me/confidenttrading</a></p>
-    <p>Contact: gjoekabz98@gmail.com</p>
-  </section>
-
-  <footer>
-    &copy; 2025 KibueFx Landers. All rights reserved.
-  </footer>
 </body>
 </html>
