@@ -1,93 +1,117 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Signup - KibueFx</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #f4f4f4;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    form {
-      background: white;
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: #000;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .fullscreen-gif {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: url('waru.gif') no-repeat center center fixed;
+      background-size: cover;
+      z-index: -1;
+    }
+
+    #signupForm {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       padding: 2rem;
       max-width: 400px;
+      width: 90%;
       margin: auto;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
     }
-    input, button {
-       background: rgba(255, 255, 255, 0.2);
-       border: none;
-       color: white;
+
+    label {
+      display: block;
+      margin: 0.8rem 0 0.4rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 1rem;
     }
 
     input::placeholder {
-  color: #000000;
-   }
+      color: #ddd;
+    }
 
-  
     button {
+      width: 100%;
+      padding: 0.9rem;
       background: #007bff;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
       cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
     }
 
     #message {
       margin-top: 1rem;
       font-weight: bold;
-      color: green;
+      color: lightgreen;
       text-align: center;
     }
-   .fullscreen-gif {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: url('waru.gif') no-repeat center center fixed;
-  background-size: cover;
-  z-index: -1;
-}
-   #signupForm {
-  background: rgba(255, 255, 255, 0.1); /* ← transparent white */
-  padding: 2rem;
-  max-width: 400px;
-  margin: 5vh auto;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* subtle shadow */
-  backdrop-filter: blur(10px); /* optional: glass effect */
-  -webkit-backdrop-filter: blur(10px); /* for Safari */
-}
 
-
+    @media (max-width: 480px) {
+      #signupForm {
+        padding: 1.5rem;
+        border-radius: 10px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <form id="signupForm">
-    <label for="name">Name:</label>
-    <input id="name" name="name" type="text" required />
-
-    <label for="email">Email:</label>
-    <input id="email" name="email" type="email" required />
-
-    <button type="submit">Submit</button>
-
-    <p id="message"></p>
-  </form>
- 
- <body>
   <div class="fullscreen-gif"></div>
 
   <form id="signupForm">
-    <!-- your form elements -->
-  </form>
-</body>
+    <h2 style="text-align: center; margin-bottom: 1rem;">Signup</h2>
 
+    <label for="name">Name:</label>
+    <input id="name" name="name" type="text" placeholder="Your Name" required />
+
+    <label for="email">Email:</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" required />
+
+    <button type="submit">Submit</button>
+    <p id="message"></p>
+  </form>
 
   <script>
     document.getElementById("signupForm").addEventListener("submit", function (e) {
@@ -97,15 +121,12 @@
       const email = document.getElementById("email").value.trim();
 
       if (name && email) {
-        document.getElementById("message").textContent = 
+        document.getElementById("message").textContent =
           "Site still a work in progress — we'll be live soon.";
 
-        // Optional: clear form
         document.getElementById("signupForm").reset();
       }
     });
- 
-
   </script>
 
 </body>
