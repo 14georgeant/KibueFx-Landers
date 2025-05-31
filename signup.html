@@ -82,7 +82,7 @@
       background: #0056b3;
     }
 
-    #message {
+    #statusMessage {
       margin-top: 1rem;
       font-weight: bold;
       color: lightgreen;
@@ -94,7 +94,7 @@
         padding: 1.2rem;
         border-radius: 12px;
       }
-      
+
       h2 {
         font-size: 1.25rem;
       }
@@ -112,6 +112,7 @@
 
   <form id="signupForm">
     <h2>Sign Up for KibueFx</h2>
+
     <label for="name">Name</label>
     <input type="text" id="name" placeholder="Your Name" required>
 
@@ -119,28 +120,22 @@
     <input type="email" id="email" placeholder="you@example.com" required>
 
     <button type="submit">Sign Up</button>
-    <div id="message"></div>
+
+    <div id="statusMessage"></div>
   </form>
 
-  <section class="cta">
-  <form id="emailForm">
-    <input type="email" id="emailInput" placeholder="Enter your email" required />
-    <button type="submit">Get Started</button>
-  </form>
-  <p id="message" style="margin-top: 1rem; color: white; font-weight: bold;"></p>
-</section>
-
-<script>
-  document.getElementById("emailForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Stop form from reloading page
-    const email = document.getElementById("emailInput").value;
-    if (email) {
-      document.getElementById("message").textContent = "Site still a work in progress — we'll be live soon.";
-      document.getElementById("emailForm").reset();
-    }
-  });
-</script>
-
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      
+      if (name && email) {
+        document.getElementById("statusMessage").textContent = "Site still a work in progress — we'll be live soon.";
+        document.getElementById("signupForm").reset();
+      }
+    });
+  </script>
 
 </body>
 </html>
