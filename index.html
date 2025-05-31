@@ -144,11 +144,23 @@
 <section class="cta">
   <form id="emailForm">
     <input type="email" id="emailInput" placeholder="Enter your email" required />
-   <button type="submit">Get Started</button>
+    <button type="submit">Get Started</button>
   </form>
   <p id="message" style="margin-top: 1rem; color: white; font-weight: bold;"></p>
 </section>
-  <button onclick="location.href='signup.html'">Get Started</button>
+
+<script>
+  document.getElementById("emailForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent real form submission
+
+    const email = document.getElementById("emailInput").value;
+
+    // Optional: Do something with the email (e.g., send to server, store in localStorage)
+    console.log("Captured email:", email);
+
+    // Redirect to the form page
+    window.location.href = "signup.html";
+  });
   
 </script>
 
