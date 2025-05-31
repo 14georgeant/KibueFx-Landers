@@ -151,11 +151,11 @@
 
 <script>
   document.getElementById("emailForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Stop form from reloading page
-    const email = document.getElementById("emailInput").value;
+    e.preventDefault(); // Stop form reload
+    const email = document.getElementById("emailInput").value.trim();
     if (email) {
-      document.getElementById("message").textContent = "Site still a work in progress — we'll be live soon.";
-      document.getElementById("emailForm").reset();
+      // Redirect to signup.html with the email in the query string
+      window.location.href = `signup.html?email=${encodeURIComponent(email)}`;
     }
   });
 </script>
