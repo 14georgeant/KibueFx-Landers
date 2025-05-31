@@ -46,10 +46,23 @@
   <form id="signupForm">
     <label for="name">Name:</label>
     <input id="name" name="name" type="text" required />
-
     <label for="email">Email:</label>
     <input id="email" name="email" type="email" required />
     <button type="submit">Submit</button>
+    <script>
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevent page reload
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+
+      if (name && email) {
+        document.getElementById("message").textContent = 
+          "Site still a work in progress — we'll be live soon.";
+
+        // Optional: clear form
+        document.getElementById("signupForm").reset();
+      }
  
     <p id="message"></p>
   </form>
