@@ -49,6 +49,9 @@
     <label for="email">Email:</label>
     <input id="email" name="email" type="email" required />
     <button type="submit">Submit</button>
+    <p id="message"></p>
+
+  
     <script>
     document.getElementById("signupForm").addEventListener("submit", function (e) {
       e.preventDefault(); // Prevent page reload
@@ -62,10 +65,7 @@
 
         // Optional: clear form
         document.getElementById("signupForm").reset();
-      }
- 
-    <p id="message"></p>
-  </form>
+    </script>
    
 </body>
 </html>
