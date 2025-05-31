@@ -151,14 +151,14 @@
 
 <script>
   document.getElementById("emailForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Stop form reload
+    e.preventDefault(); // Prevent reload
     const email = document.getElementById("emailInput").value.trim();
     if (email) {
-      // Redirect to signup.html with the email in the query string
       window.location.href = `signup.html?email=${encodeURIComponent(email)}`;
     }
   });
 </script>
+
 
 
   <section class="features">
