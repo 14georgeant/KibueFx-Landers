@@ -42,6 +42,15 @@
     <input id="email" name="email" required type="email">
 
     <button type="submit">Submit</button>
+    <script>
+  document.getElementById("emailForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Stop form from reloading page
+    const email = document.getElementById("emailInput").value;
+    if (email) {
+      document.getElementById("message").textContent = "Site still a work in progress — we'll be live soon.";
+      document.getElementById("emailForm").reset();
+    }
+  });
   </form>
 </body>
 </html>
