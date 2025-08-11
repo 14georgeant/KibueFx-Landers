@@ -97,14 +97,14 @@ function showSignup() {
   document.getElementById('signupForm').style.display = 'block';
 }
 
-// Helper to send form data to Apps Script
 function postForm(url, data) {
   return fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(data)
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
   }).then(res => res.json());
 }
+
 
 const scriptURL = "https://script.google.com/macros/s/AKfycbwqlxpW5FGy8dymIH2JsnQzZeBJspIJkvYYr_X0thH6xfhXqEEwcEwrYCFDsSE_ffzW_w/exec";
 
