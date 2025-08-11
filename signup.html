@@ -124,10 +124,10 @@
     <div id="statusMessage"></div>
   </form>
 
- <script>
+<script>
 document.getElementById("signupForm").addEventListener("submit", function (e) {
   e.preventDefault();
-  
+
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const statusMessage = document.getElementById("statusMessage");
@@ -143,15 +143,21 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
 
   fetch("https://script.google.com/macros/s/AKfycbzYjmTirbRFIsGz2xGTZ4IZI7xUHBhSuTXWSnhxvRUB1D7BcMIT-w_8KOTNeNi3HIbU/exec", {
     method: "POST",
-    mode: "no-cors", // Google Apps Script needs this for public POST
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email })
   })
-  .then(() => {
-    statusMessage.textContent = "Success! Redirecting...";
-    setTimeout(() => {
-      window.location.href = "gloss.html";
-    }, 1000);
+  .then(res => res.json())
+  .then(data => {
+    if (data.result === "error") {
+      // Show duplicate email warning
+      statusMessage.textContent = data.message;
+      statusMessage.style.color = "orange";
+    } else {
+      statusMessage.textContent = "Success! Redirecting...";
+      setTimeout(() => {
+        window.location.href = "gloss.html";
+      }, 1000);
+    }
   })
   .catch(() => {
     statusMessage.textContent = "Error submitting form.";
