@@ -110,7 +110,7 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
   statusMessage.textContent = "Submitting...";
   statusMessage.style.color = "lightgreen";
 
-  fetch("https://script.google.com/macros/s/AKfycbzYjmTirbRFIsGz2xGTZ4IZI7xUHBhSuTXWSnhxvRUB1D7BcMIT-w_8KOTNeNi3HIbU/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbxRLng07URI7LmXYYSWZX8H3pynXH7LDzvnJuCna46aWcVllPtIc6Kdrkq5Ca2AQw_I/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ mode: "signup", name, email })
