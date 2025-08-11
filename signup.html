@@ -125,22 +125,41 @@
   </form>
 
  <script>
-  document.getElementById("signupForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    
-    if (name && email) {
-      // Optionally show a message before redirecting
-      document.getElementById("statusMessage").textContent = "Redirecting...";
-      
-      // Redirect to glossary page after a short delay
-      setTimeout(() => {
-        window.location.href = "gloss.html"; // change this to your glossary filename if different
-      }, 1000); // 1 second delay
-    }
+document.getElementById("signupForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const statusMessage = document.getElementById("statusMessage");
+
+  if (!name || !email) {
+    statusMessage.textContent = "Please fill out all fields.";
+    statusMessage.style.color = "red";
+    return;
+  }
+
+  statusMessage.textContent = "Submitting...";
+  statusMessage.style.color = "lightgreen";
+
+  fetch("https://script.google.com/macros/s/AKfycbzYjmTirbRFIsGz2xGTZ4IZI7xUHBhSuTXWSnhxvRUB1D7BcMIT-w_8KOTNeNi3HIbU/exec", {
+    method: "POST",
+    mode: "no-cors", // Google Apps Script needs this for public POST
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email })
+  })
+  .then(() => {
+    statusMessage.textContent = "Success! Redirecting...";
+    setTimeout(() => {
+      window.location.href = "gloss.html";
+    }, 1000);
+  })
+  .catch(() => {
+    statusMessage.textContent = "Error submitting form.";
+    statusMessage.style.color = "red";
   });
+});
 </script>
+
 
 
 </body>
