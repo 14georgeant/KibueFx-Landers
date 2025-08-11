@@ -1,187 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sign up / Login - KibueFx</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-      background: #000;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
-    .fullscreen-gif {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: url('waru.gif') no-repeat center center fixed;
-      background-size: cover;
-      z-index: -1;
-    }
-    .form-container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      padding: 2rem;
-      max-width: 400px;
-      width: 90%;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-    }
-    label { display: block; margin: 0.8rem 0 0.4rem; font-weight: bold; }
-    input {
-      width: 100%; padding: 0.8rem; margin-bottom: 1.2rem;
-      border: none; border-radius: 8px;
-      background: rgba(255, 255, 255, 0.2); color: white; font-size: 1rem;
-    }
-    input::placeholder { color: #ddd; }
-    button {
-      width: 100%; padding: 1rem; background: #007bff; color: white;
-      border: none; border-radius: 8px; font-weight: bold; font-size: 1rem;
-      cursor: pointer; transition: background 0.3s ease;
-    }
-    button:hover { background: #0056b3; }
-    #statusMessage { margin-top: 1rem; font-weight: bold; text-align: center; }
-    .switch-link { color: lightblue; cursor: pointer; text-decoration: underline; }
-    @media (max-width: 480px) {
-      .form-container { padding: 1.2rem; border-radius: 12px; }
-      h2 { font-size: 1.25rem; }
-      input, button { font-size: 0.95rem; padding: 0.85rem; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Sign up / Login - KibueFx</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .fullscreen-gif {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: url('waru.gif') no-repeat center center fixed;
+            background-size: cover;
+            z-index: -1;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+        h2 { text-align: center; margin-bottom: 1.5rem; }
+        label { display: block; margin: 0.8rem 0 0.4rem; font-weight: bold; }
+        input {
+            width: 100%; padding: 0.8rem; margin-bottom: 1.2rem;
+            border: none; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2); color: white; font-size: 1rem;
+        }
+        input::placeholder { color: #ddd; }
+        button {
+            width: 100%; padding: 1rem; background: #007bff; color: white;
+            border: none; border-radius: 8px; font-weight: bold; font-size: 1rem;
+            cursor: pointer; transition: background 0.3s ease;
+        }
+        button:hover { background: #0056b3; }
+        #statusMessage, #loginStatusMessage {
+            margin-top: 1rem; font-weight: bold; text-align: center;
+        }
+        .switch-link { color: lightblue; cursor: pointer; text-decoration: underline; }
+        @media (max-width: 480px) {
+            .form-container { padding: 1.2rem; border-radius: 12px; }
+            h2 { font-size: 1.25rem; }
+            input, button { font-size: 0.95rem; padding: 0.85rem; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="fullscreen-gif"></div>
+    <div class="fullscreen-gif"></div>
 
-  <div class="form-container">
-    <!-- Signup Form -->
-    <form id="signupForm">
-      <h2>Sign Up for KibueFx Landers</h2>
-      <label for="name">Name</label>
-      <input type="text" id="name" placeholder="Your Name" required>
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="you@example.com" required>
-      <button type="submit">Sign Up</button>
-      <p style="text-align:center; margin-top:10px;">
-        Already have an account? <span class="switch-link" onclick="showLogin()">Login</span>
-      </p>
-      <div id="statusMessage"></div>
-    </form>
+    <div class="form-container">
+        <form id="signupForm">
+            <h2>Sign Up for KibueFx Landers</h2>
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Your Name" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="you@example.com" required>
+            <button type="submit">Sign Up</button>
+            <p style="text-align:center; margin-top:10px;">
+                Already have an account? <span class="switch-link" onclick="showLogin()">Login</span>
+            </p>
+            <div id="statusMessage"></div>
+        </form>
 
-    <!-- Login Form -->
-    <form id="loginForm" style="display:none;">
-      <h2>Login to KibueFx Landers</h2>
-      <label for="loginEmail">Email</label>
-      <input type="email" id="loginEmail" placeholder="you@example.com" required>
-      <button type="submit">Login</button>
-      <p style="text-align:center; margin-top:10px;">
-        Don’t have an account? <span class="switch-link" onclick="showSignup()">Sign Up</span>
-      </p>
-      <div id="loginStatusMessage"></div>
-    </form>
-  </div>
+        <form id="loginForm" style="display:none;">
+            <h2>Login to KibueFx Landers</h2>
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required>
+            <button type="submit">Login</button>
+            <p style="text-align:center; margin-top:10px;">
+                Don’t have an account? <span class="switch-link" onclick="showSignup()">Sign Up</span>
+            </p>
+            <div id="loginStatusMessage"></div>
+        </form>
+    </div>
 
 <script>
-// Switch between forms
-function showLogin() {
-  document.getElementById('signupForm').style.display = 'none';
-  document.getElementById('loginForm').style.display = 'block';
-}
-function showSignup() {
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('signupForm').style.display = 'block';
-}
-
-function postForm(url, data) {
-  return fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  }).then(res => res.json());
-}
-
-
-const scriptURL = "https://script.google.com/macros/s/AKfycbz4Fc7HA-v6gnbeULqCdy4RXSVNGmBXCxiZffVD1DNt3l3Xec6y7EYs22xCL2jkTjNq/exec";
-
-// Signup handler
-document.getElementById("signupForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const statusMessage = document.getElementById("statusMessage");
-
-  if (!name || !email) {
-    statusMessage.textContent = "Please fill out all fields.";
-    statusMessage.style.color = "red";
-    return;
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    statusMessage.textContent = "Invalid email format.";
-    statusMessage.style.color = "red";
-    return;
-  }
-
-  statusMessage.textContent = "Submitting...";
-  statusMessage.style.color = "lightgreen";
-
-  try {
-    const data = await postForm(
-      scriptURL,
-      { action: "signup", name, email }
-    );
-
-    if (data.result === "error") {
-      statusMessage.textContent = data.message;
-      statusMessage.style.color = "orange";
-    } else {
-      statusMessage.textContent = "Signup successful! Redirecting...";
-      setTimeout(() => { window.location.href = "gloss.html"; }, 1000);
+    // Switch between forms
+    function showLogin() {
+        document.getElementById('signupForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
     }
-  } catch {
-    statusMessage.textContent = "Error submitting form.";
-    statusMessage.style.color = "red";
-  }
-});
-
-// Login handler
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim();
-  const statusMessage = document.getElementById("loginStatusMessage");
-
-  if (!email) {
-    statusMessage.textContent = "Please enter your email.";
-    statusMessage.style.color = "red";
-    return;
-  }
-
-  statusMessage.textContent = "Checking...";
-  statusMessage.style.color = "lightgreen";
-
-  try {
-    const data = await postForm(
-      scriptURL,
-      { action: "login", email }
-    );
-
-    if (data.result === "success") {
-      statusMessage.textContent = "Login successful! Redirecting...";
-      setTimeout(() => { window.location.href = "gloss.html"; }, 1000);
-    } else {
-      statusMessage.textContent = "Email not found. Please sign up.";
-      statusMessage.style.color = "orange";
+    function showSignup() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'block';
     }
-  } catch {
-    statusMessage.textContent = "Error logging in.";
-    statusMessage.style.color = "red";
-  }
-});
+
+    // IMPORTANT: Replace this URL with your deployed Apps Script URL
+    const scriptURL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    function postForm(url, data) {
+        return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        }).then(res => res.json());
+    }
+
+    // Signup handler
+    document.getElementById("signupForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const statusMessage = document.getElementById("statusMessage");
+
+        if (!name || !email) {
+            statusMessage.textContent = "Please fill out all fields.";
+            statusMessage.style.color = "red";
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            statusMessage.textContent = "Invalid email format.";
+            statusMessage.style.color = "red";
+            return;
+        }
+
+        statusMessage.textContent = "Submitting...";
+        statusMessage.style.color = "lightgreen";
+
+        try {
+            const data = await postForm(
+                scriptURL,
+                { action: "signup", name, email }
+            );
+
+            if (data.result === "error") {
+                statusMessage.textContent = data.message;
+                statusMessage.style.color = "orange";
+            } else {
+                statusMessage.textContent = "Signup successful! Redirecting...";
+                statusMessage.style.color = "lightgreen";
+                setTimeout(() => { window.location.href = "gloss.html"; }, 1000);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            statusMessage.textContent = "Error submitting form.";
+            statusMessage.style.color = "red";
+        }
+    });
+
+    // Login handler
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value.trim();
+        const statusMessage = document.getElementById("loginStatusMessage");
+
+        if (!email) {
+            statusMessage.textContent = "Please enter your email.";
+            statusMessage.style.color = "red";
+            return;
+        }
+
+        statusMessage.textContent = "Checking...";
+        statusMessage.style.color = "lightgreen";
+
+        try {
+            const data = await postForm(
+                scriptURL,
+                { action: "login", email }
+            );
+
+            if (data.result === "success") {
+                statusMessage.textContent = "Login successful! Redirecting...";
+                statusMessage.style.color = "lightgreen";
+                setTimeout(() => { window.location.href = "gloss.html"; }, 1000);
+            } else {
+                statusMessage.textContent = data.message;
+                statusMessage.style.color = "orange";
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            statusMessage.textContent = "Error logging in.";
+            statusMessage.style.color = "red";
+        }
+    });
 </script>
 </body>
 </html>
