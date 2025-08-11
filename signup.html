@@ -87,6 +87,7 @@
   </div>
 
 <script>
+// Switch between forms
 function showLogin() {
   document.getElementById('signupForm').style.display = 'none';
   document.getElementById('loginForm').style.display = 'block';
@@ -96,61 +97,77 @@ function showSignup() {
   document.getElementById('signupForm').style.display = 'block';
 }
 
+// Helper to send form data to Apps Script
+function postForm(url, data) {
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(data)
+  }).then(res => res.json());
+}
+
 // Signup handler
-document.getElementById("signupForm").addEventListener("submit", function (e) {
+document.getElementById("signupForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const statusMessage = document.getElementById("statusMessage");
+
   if (!name || !email) {
     statusMessage.textContent = "Please fill out all fields.";
     statusMessage.style.color = "red";
     return;
   }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    statusMessage.textContent = "Invalid email format.";
+    statusMessage.style.color = "red";
+    return;
+  }
+
   statusMessage.textContent = "Submitting...";
   statusMessage.style.color = "lightgreen";
 
-  fetch("https://script.google.com/macros/s/AKfycbxRLng07URI7LmXYYSWZX8H3pynXH7LDzvnJuCna46aWcVllPtIc6Kdrkq5Ca2AQw_I/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode: "signup", name, email })
-  })
-  .then(res => res.json())
-  .then(data => {
+  try {
+    const data = await postForm(
+      "https://script.google.com/macros/s/AKfycbxRLng07URI7LmXYYSWZX8H3pynXH7LDzvnJuCna46aWcVllPtIc6Kdrkq5Ca2AQw_I/exec",
+      { action: "signup", name, email }
+    );
+
     if (data.result === "error") {
       statusMessage.textContent = data.message;
       statusMessage.style.color = "orange";
     } else {
-      statusMessage.textContent = "Success! Redirecting...";
+      statusMessage.textContent = "Signup successful! Redirecting...";
       setTimeout(() => { window.location.href = "gloss.html"; }, 1000);
     }
-  })
-  .catch(() => {
+  } catch {
     statusMessage.textContent = "Error submitting form.";
     statusMessage.style.color = "red";
-  });
+  }
 });
 
 // Login handler
-document.getElementById("loginForm").addEventListener("submit", function (e) {
+document.getElementById("loginForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const email = document.getElementById("loginEmail").value.trim();
   const statusMessage = document.getElementById("loginStatusMessage");
+
   if (!email) {
     statusMessage.textContent = "Please enter your email.";
     statusMessage.style.color = "red";
     return;
   }
+
   statusMessage.textContent = "Checking...";
   statusMessage.style.color = "lightgreen";
 
-  fetch("https://script.google.com/macros/s/AKfycbzYjmTirbRFIsGz2xGTZ4IZI7xUHBhSuTXWSnhxvRUB1D7BcMIT-w_8KOTNeNi3HIbU/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode: "login", email })
-  })
-  .then(res => res.json())
-  .then(data => {
+  try {
+    const data = await postForm(
+      "https://script.google.com/macros/s/AKfycbzYjmTirbRFIsGz2xGTZ4IZI7xUHBhSuTXWSnhxvRUB1D7BcMIT-w_8KOTNeNi3HIbU/exec",
+      { action: "login", email }
+    );
+
     if (data.result === "success") {
       statusMessage.textContent = "Login successful! Redirecting...";
       setTimeout(() => { window.location.href = "gloss.html"; }, 1000);
@@ -158,11 +175,10 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
       statusMessage.textContent = "Email not found. Please sign up.";
       statusMessage.style.color = "orange";
     }
-  })
-  .catch(() => {
+  } catch {
     statusMessage.textContent = "Error logging in.";
     statusMessage.style.color = "red";
-  });
+  }
 });
 </script>
 </body>
