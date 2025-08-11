@@ -106,6 +106,8 @@ function postForm(url, data) {
   }).then(res => res.json());
 }
 
+const scriptURL = "https://script.google.com/macros/s/AKfycbzAjnmhVVu3mSm3q3wfn_RZdNC76bC5zOCilXdE_0INo8OX6hw5dc74A50vlMd9UPmH4A/exec";
+
 // Signup handler
 document.getElementById("signupForm").addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -130,7 +132,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
 
   try {
     const data = await postForm(
-      "https://script.google.com/macros/s/AKfycbxRLng07URI7LmXYYSWZX8H3pynXH7LDzvnJuCna46aWcVllPtIc6Kdrkq5Ca2AQw_I/exec",
+      scriptURL,
       { action: "signup", name, email }
     );
 
@@ -164,7 +166,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
   try {
     const data = await postForm(
-      "https://script.google.com/macros/s/AKfycbzYjmTirbRFIsGz2xGTZ4IZI7xUHBhSuTXWSnhxvRUB1D7BcMIT-w_8KOTNeNi3HIbU/exec",
+      scriptURL,
       { action: "login", email }
     );
 
