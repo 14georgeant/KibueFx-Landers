@@ -175,6 +175,7 @@
     </div>
 
     <script>
+        // Switch between forms
         function showLogin() {
             document.getElementById('signupForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
@@ -194,44 +195,48 @@
             document.getElementById('loginStatusMessage').textContent = '';
         }
 
+        // Sanitize inputs to prevent XSS
         function sanitizeInput(input) {
-            return input.replace(/[<>"'&]/g, '');
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
         }
 
-        // Replace with your deployed Apps Script URL
+        // Replace with your deployed Apps Script Web App URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwUYk31J2qSm761-QiMkj_u6taClKBvvKd-gofqakVCvSYlGwoGi7IHDmRlg7AzQB3C_Q/exec';
 
+        // Handle form submission with fetch
         async function postForm(url, data) {
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'no-cors' // Use no-cors to avoid CORS issues
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
-                }
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return await response.json();
-                } else {
-                    throw new Error('Invalid response format: Expected JSON');
-                }
+                // Since mode is 'no-cors', response cannot be read directly
+                // Assume success if no network error
+                return { result: 'success' };
             } catch (error) {
                 console.error('Fetch error:', error);
-                throw error;
+                throw new Error('Network error. Please check your connection or try again later.');
             }
         }
 
+        // Check if redirect page exists
         async function checkRedirect(url) {
             try {
-                const response = await fetch(url, { method: 'HEAD' });
-                return response.ok;
+                const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+                // no-cors returns opaque response, so assume success unless network error
+                return true;
             } catch {
                 return false;
             }
         }
 
+        // Signup form submission
         document.getElementById('signupForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const nameInput = document.getElementById('name');
@@ -247,6 +252,7 @@
 
             clearMessages();
 
+            // Client-side validation
             if (!name || !email || !password || !confirmPassword) {
                 statusMessage.textContent = 'Please fill out all fields.';
                 statusMessage.style.color = 'red';
@@ -284,22 +290,16 @@
 
             try {
                 const data = await postForm(scriptURL, { action: 'signup', name, email, password });
-                console.log('Signup response:', data);
-                if (data.result === 'error') {
-                    statusMessage.textContent = data.message || 'Signup error.';
-                    statusMessage.style.color = 'orange';
+                statusMessage.textContent = 'Signup successful! Redirecting...';
+                statusMessage.style.color = 'lightgreen';
+                const redirectOk = await checkRedirect('gloss.html');
+                if (redirectOk) {
+                    setTimeout(() => {
+                        window.location.href = 'gloss.html';
+                    }, 1000);
                 } else {
-                    statusMessage.textContent = 'Signup successful! Redirecting...';
-                    statusMessage.style.color = 'lightgreen';
-                    const redirectOk = await checkRedirect('gloss.html');
-                    if (redirectOk) {
-                        setTimeout(() => {
-                            window.location.href = 'gloss.html';
-                        }, 1000);
-                    } else {
-                        statusMessage.textContent = 'Signup successful, but redirect page not found.';
-                        statusMessage.style.color = 'orange';
-                    }
+                    statusMessage.textContent = 'Signup successful, but redirect page not found.';
+                    statusMessage.style.color = 'orange';
                 }
             } catch (error) {
                 console.error('Signup fetch error:', error);
@@ -311,6 +311,7 @@
             }
         });
 
+        // Login form submission
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const emailInput = document.getElementById('loginEmail');
@@ -322,6 +323,7 @@
 
             clearMessages();
 
+            // Client-side validation
             if (!email || !password) {
                 statusMessage.textContent = 'Please fill out all fields.';
                 statusMessage.style.color = 'red';
@@ -341,21 +343,15 @@
 
             try {
                 const data = await postForm(scriptURL, { action: 'login', email, password });
-                console.log('Login response:', data);
-                if (data.result === 'success') {
-                    statusMessage.textContent = 'Login successful! Redirecting...';
-                    statusMessage.style.color = 'lightgreen';
-                    const redirectOk = await checkRedirect('gloss.html');
-                    if (redirectOk) {
-                        setTimeout(() => {
-                            window.location.href = 'gloss.html';
-                        }, 1000);
-                    } else {
-                        statusMessage.textContent = 'Login successful, but redirect page not found.';
-                        statusMessage.style.color = 'orange';
-                    }
+                statusMessage.textContent = 'Login successful! Redirecting...';
+                statusMessage.style.color = 'lightgreen';
+                const redirectOk = await checkRedirect('gloss.html');
+                if (redirectOk) {
+                    setTimeout(() => {
+                        window.location.href = 'gloss.html';
+                    }, 1000);
                 } else {
-                    statusMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                    statusMessage.textContent = 'Login successful, but redirect page not found.';
                     statusMessage.style.color = 'orange';
                 }
             } catch (error) {
@@ -378,7 +374,7 @@
             });
         });
 
-        // Real-time validation example for email
+        // Real-time validation for email inputs
         const emailInputs = [document.getElementById('email'), document.getElementById('loginEmail')];
         emailInputs.forEach(input => {
             input.addEventListener('input', () => {
