@@ -1,1 +1,338 @@
+showing error looging in no fetch fix: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up / Login - KibueFx</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+        }
+        .fullscreen-gif {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(44, 62, 80, 0.5));
+            z-index: -1;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        label {
+            display: block;
+            margin: 0.8rem 0 0.4rem;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+        }
+        input::placeholder {
+            color: #ddd;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.15) inset;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        input:-moz-autofill {
+            box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.15) inset;
+            color: white !important;
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover:not(:disabled) {
+            background: #0056b3;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #statusMessage,
+        #loginStatusMessage {
+            margin-top: 1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .switch-link {
+            color: lightblue;
+            cursor: pointer;
+            text-decoration: underline;
+            user-select: none;
+        }
+        .switch-link:hover {
+            color: #87cefa;
+        }
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.2rem;
+                border-radius: 12px;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            input,
+            button {
+                font-size: 0.95rem;
+                padding: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="fullscreen-gif"></div>
 
+    <div class="form-container">
+        <form id="signupForm" novalidate aria-label="Sign Up Form">
+            <h2>Sign Up for KibueFx Landers</h2>
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Your Name" required autocomplete="name" aria-required="true" />
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="you@example.com" required autocomplete="email" aria-required="true" />
+            <button type="submit">Sign Up</button>
+            <p style="text-align: center; margin-top: 10px;">
+                Already have an account? <span class="switch-link" onclick="showLogin()" role="button" tabindex="0">Login</span>
+            </p>
+            <div id="statusMessage" aria-live="polite"></div>
+        </form>
+
+        <form id="loginForm" style="display: none;" novalidate aria-label="Login Form">
+            <h2>Login to KibueFx Landers</h2>
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" aria-required="true" />
+            <button type="submit">Login</button>
+            <p style="text-align: center; margin-top: 10px;">
+                Don’t have an account? <span class="switch-link" onclick="showSignup()" role="button" tabindex="0">Sign Up</span>
+            </p>
+            <div id="loginStatusMessage" aria-live="polite"></div>
+        </form>
+    </div>
+
+    <script>
+        function showLogin() {
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            clearMessages();
+            document.getElementById('loginEmail').focus();
+        }
+
+        function showSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+            clearMessages();
+            document.getElementById('name').focus();
+        }
+
+        function clearMessages() {
+            document.getElementById('statusMessage').textContent = '';
+            document.getElementById('loginStatusMessage').textContent = '';
+        }
+
+        // Replace with your deployed Apps Script URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwUYk31J2qSm761-QiMkj_u6taClKBvvKd-gofqakVCvSYlGwoGi7IHDmRlg7AzQB3C_Q/exec';
+
+        async function postForm(url, data) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                    mode: 'cors'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
+                }
+                // Attempt to parse JSON, handle non-JSON responses
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return await response.json();
+                } else {
+                    throw new Error('Invalid response format: Expected JSON');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error;
+            }
+        }
+
+        // Check if redirect target exists
+        async function checkRedirect(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch {
+                return false;
+            }
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const statusMessage = document.getElementById('statusMessage');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+
+            clearMessages();
+
+            if (!name || !email) {
+                statusMessage.textContent = 'Please fill out all fields.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            if (name.length < 2) {
+                statusMessage.textContent = 'Name must be at least 2 characters long.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                statusMessage.textContent = 'Invalid email format.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            statusMessage.textContent = 'Submitting...';
+            statusMessage.style.color = 'lightgreen';
+            submitBtn.disabled = true;
+
+            try {
+                const data = await postForm(scriptURL, { action: 'signup', name, email });
+                console.log('Signup response:', data);
+                if (data.result === 'error') {
+                    statusMessage.textContent = data.message || 'Signup error.';
+                    statusMessage.style.color = 'orange';
+                } else {
+                    statusMessage.textContent = 'Signup successful! Redirecting...';
+                    statusMessage.style.color = 'lightgreen';
+                    const redirectOk = await checkRedirect('gloss.html');
+                    if (redirectOk) {
+                        setTimeout(() => {
+                            window.location.href = 'gloss.html';
+                        }, 1000);
+                    } else {
+                        statusMessage.textContent = 'Signup successful, but redirect page not found.';
+                        statusMessage.style.color = 'orange';
+                    }
+                }
+            } catch (error) {
+                console.error('Signup fetch error:', error);
+                statusMessage.textContent = `Error submitting form: ${error.message}`;
+                statusMessage.style.color = 'red';
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginEmail');
+            const statusMessage = document.getElementById('loginStatusMessage');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const email = emailInput.value.trim();
+
+            clearMessages();
+
+            if (!email) {
+                statusMessage.textContent = 'Please enter your email.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                statusMessage.textContent = 'Invalid email format.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            statusMessage.textContent = 'Checking...';
+            statusMessage.style.color = 'lightgreen';
+            submitBtn.disabled = true;
+
+            try {
+                const data = await postForm(scriptURL, { action: 'login', email });
+                console.log('Login response:', data);
+                if (data.result === 'success') {
+                    statusMessage.textContent = 'Login successful! Redirecting...';
+                    statusMessage.style.color = 'lightgreen';
+                    const redirectOk = await checkRedirect('gloss.html');
+                    if (redirectOk) {
+                        setTimeout(() => {
+                            window.location.href = 'gloss.html';
+                        }, 1000);
+                    } else {
+                        statusMessage.textContent = 'Login successful, but redirect page not found.';
+                        statusMessage.style.color = 'orange';
+                    }
+                } else {
+                    statusMessage.textContent = data.message || 'Login failed. Please check your email.';
+                    statusMessage.style.color = 'orange';
+                }
+            } catch (error) {
+                console.error('Login fetch error:', error);
+                statusMessage.textContent = `Error logging in: ${error.message}`;
+                statusMessage.style.color = 'red';
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Add keyboard accessibility for switch links
+        document.querySelectorAll('.switch-link').forEach(link => {
+            link.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    link.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
