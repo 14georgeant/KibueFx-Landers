@@ -1,0 +1,171 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using NotebookLM - ICT Trading Resources</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      margin: 0;
+      padding: 0;
+      background: url('20250603_1934_Samurai with Forex Chart_simple_compose_01jwva7zhqertak3qt4av7vxcn.png') no-repeat center center fixed;
+      background-size: cover;
+      background-color: #111;
+      color: #f4f4f4;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.75);
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      line-height: 1.7;
+    }
+
+    h1, h2, h3 {
+      color: #ffd700;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+    }
+
+    a {
+      color: #ffd700;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #e6c200;
+    }
+
+    .section {
+      margin-top: 2rem;
+    }
+
+    button {
+      background-color: #ffd700;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: #000;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      margin: 2rem auto;
+    }
+
+    button:hover {
+      background-color: #e6c200;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>Using NotebookLM for ICT Trading Research</h1>
+
+    <div class="section">
+      <h2>Introduction to NotebookLM</h2>
+      <p>
+        <a href="https://notebooklm.google.com/notebook/dc2cf580-3d63-4470-9e69-1fb444fbe94e" target="_blank">NotebookLM</a> is a powerful tool by Google designed to help you organize, summarize, and generate insights from your research materials. For traders studying the Inner Circle Trader (ICT) methodologies, NotebookLM can streamline the process of analyzing market structure, price action, and trading setups by consolidating notes, videos, and other resources into actionable insights.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>How to Use NotebookLM</h2>
+      <p>
+        Follow these steps to leverage NotebookLM for your ICT trading research:
+      </p>
+      <ol>
+        <li>
+          <strong>Access NotebookLM</strong>: Visit <a href="https://notebooklm.google.com/notebook/dc2cf580-3d63-4470-9e69-1fb444fbe94e" target="_blank">this NotebookLM link</a> to explore a pre-configured notebook tailored for ICT trading concepts. You’ll need a Google account to sign in.
+        </li>
+        <li>
+          <strong>Create or Open a Notebook</strong>: Once signed in, you can open the linked notebook or create a new one. Notebooks act as your workspace for organizing trading-related content.
+        </li>
+        <li>
+          <strong>Add Sources</strong>: Upload or link relevant materials, such as ICT’s <em>Elements of a Trade Setup</em> video, PDF notes, or Telegram archives. NotebookLM supports various file types and web links.
+        </li>
+        <li>
+          <strong>Generate Summaries</strong>: Use NotebookLM’s AI to summarize key concepts, like market structure (e.g., HH/HL, LH/LL), liquidity pools, or fair value gaps (FVGs). This helps distill complex ICT teachings into concise notes.
+        </li>
+        <li>
+          <strong>Ask Questions</strong>: Query the notebook to clarify ICT concepts, e.g., “What is a liquidity raid?” or “How to identify an order block?” The AI provides answers based on your uploaded sources.
+        </li>
+        <li>
+          <strong>Organize Insights</strong>: Create sections for topics like market structure, trade setups, or timing (killzones). Export or share your notebook for collaboration with other traders.
+        </li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>Tips for ICT Traders Using NotebookLM</h2>
+      <ul>
+        <li><strong>Focus on Key Concepts</strong>: Add sources specific to ICT’s methodologies, such as videos on order blocks or fair value gaps, to build a targeted knowledge base.</li>
+        <li><strong>Use for Backtesting</strong>: Summarize past trade setups (e.g., WTI Futures examples) and compare them with NotebookLM’s analysis to refine your strategy.</li>
+        <li><strong>Stay Organized</strong>: Tag sources with labels like “Market Structure” or “Liquidity” for quick reference during trading sessions.</li>
+        <li><strong>Leverage AI Insights</strong>: Use NotebookLM’s question-answering feature to clarify doubts about ICT’s criteria, such as aligning trades with killzones (London/NY Open).</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Accessing the ICT Notebook</h2>
+      <p>
+        The pre-configured NotebookLM for ICT trading is available at:
+        <br>
+        <a href="https://notebooklm.google.com/notebook/dc2cf580-3d63-4470-9e69-1fb444fbe94e" target="_blank">https://notebooklm.google.com/notebook/dc2cf580-3d63-4470-9e69-1fb444fbe94e</a>
+        <br>
+        Sign in with your Google account to explore the notebook, which includes resources on market structure, liquidity raids, and trade setup elements.
+      </p>
+    </div>
+
+    <button onclick="window.location.href='index.html'">Back to Main Page</button>
+  </div>
+</body>
+</html>
