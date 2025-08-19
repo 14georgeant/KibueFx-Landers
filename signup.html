@@ -221,7 +221,7 @@
                 return { result: 'success' };
             } catch (error) {
                 console.error('Fetch error:', error);
-                throw new Error('Network error. Please check your connection or try again later.');
+                throw new Error('Network error. Please try logging in or contact support if this persists.');
             }
         }
 
@@ -298,12 +298,12 @@
                         window.location.href = 'gloss.html';
                     }, 1000);
                 } else {
-                    statusMessage.textContent = 'Signup successful, but redirect page not found.';
+                    statusMessage.textContent = 'Signup successful, but redirect page not found. Try logging in.';
                     statusMessage.style.color = 'orange';
                 }
             } catch (error) {
                 console.error('Signup fetch error:', error);
-                statusMessage.textContent = `Error submitting form: ${error.message}`;
+                statusMessage.textContent = `${error.message} If you already have an account, try logging in.`;
                 statusMessage.style.color = 'red';
             } finally {
                 submitBtn.disabled = false;
