@@ -93,6 +93,21 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+        button.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         #statusMessage,
         #loginStatusMessage {
             margin-top: 1rem;
@@ -134,6 +149,10 @@
             <input type="text" id="name" placeholder="Your Name" required autocomplete="name" aria-required="true" />
             <label for="email">Email</label>
             <input type="email" id="email" placeholder="you@example.com" required autocomplete="email" aria-required="true" />
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Your Password" required autocomplete="new-password" aria-required="true" />
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required aria-required="true" />
             <button type="submit">Sign Up</button>
             <p style="text-align: center; margin-top: 10px;">
                 Already have an account? <span class="switch-link" onclick="showLogin()" role="button" tabindex="0">Login</span>
@@ -145,6 +164,8 @@
             <h2>Login to KibueFx Landers</h2>
             <label for="loginEmail">Email</label>
             <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" aria-required="true" />
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Your Password" required autocomplete="current-password" aria-required="true" />
             <button type="submit">Login</button>
             <p style="text-align: center; margin-top: 10px;">
                 Don’t have an account? <span class="switch-link" onclick="showSignup()" role="button" tabindex="0">Sign Up</span>
@@ -158,19 +179,23 @@
             document.getElementById('signupForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
             clearMessages();
-            document.getElementById('loginEmail').focus();
+            setTimeout(() => document.getElementById('loginEmail').focus(), 0);
         }
 
         function showSignup() {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('signupForm').style.display = 'block';
             clearMessages();
-            document.getElementById('name').focus();
+            setTimeout(() => document.getElementById('name').focus(), 0);
         }
 
         function clearMessages() {
             document.getElementById('statusMessage').textContent = '';
             document.getElementById('loginStatusMessage').textContent = '';
+        }
+
+        function sanitizeInput(input) {
+            return input.replace(/[<>"'&]/g, '');
         }
 
         // Replace with your deployed Apps Script URL
@@ -180,14 +205,12 @@
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify(data),
-                    mode: 'cors'
                 });
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
                 }
-                // Attempt to parse JSON, handle non-JSON responses
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     return await response.json();
@@ -200,7 +223,6 @@
             }
         }
 
-        // Check if redirect target exists
         async function checkRedirect(url) {
             try {
                 const response = await fetch(url, { method: 'HEAD' });
@@ -214,14 +236,18 @@
             e.preventDefault();
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
             const statusMessage = document.getElementById('statusMessage');
             const submitBtn = e.target.querySelector('button[type="submit"]');
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
+            const name = sanitizeInput(nameInput.value.trim());
+            const email = sanitizeInput(emailInput.value.trim());
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
 
             clearMessages();
 
-            if (!name || !email) {
+            if (!name || !email || !password || !confirmPassword) {
                 statusMessage.textContent = 'Please fill out all fields.';
                 statusMessage.style.color = 'red';
                 return;
@@ -239,12 +265,25 @@
                 return;
             }
 
+            if (password.length < 6) {
+                statusMessage.textContent = 'Password must be at least 6 characters long.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                statusMessage.textContent = 'Passwords do not match.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
             statusMessage.textContent = 'Submitting...';
             statusMessage.style.color = 'lightgreen';
             submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
 
             try {
-                const data = await postForm(scriptURL, { action: 'signup', name, email });
+                const data = await postForm(scriptURL, { action: 'signup', name, email, password });
                 console.log('Signup response:', data);
                 if (data.result === 'error') {
                     statusMessage.textContent = data.message || 'Signup error.';
@@ -268,20 +307,23 @@
                 statusMessage.style.color = 'red';
             } finally {
                 submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
             }
         });
 
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const emailInput = document.getElementById('loginEmail');
+            const passwordInput = document.getElementById('loginPassword');
             const statusMessage = document.getElementById('loginStatusMessage');
             const submitBtn = e.target.querySelector('button[type="submit"]');
-            const email = emailInput.value.trim();
+            const email = sanitizeInput(emailInput.value.trim());
+            const password = passwordInput.value.trim();
 
             clearMessages();
 
-            if (!email) {
-                statusMessage.textContent = 'Please enter your email.';
+            if (!email || !password) {
+                statusMessage.textContent = 'Please fill out all fields.';
                 statusMessage.style.color = 'red';
                 return;
             }
@@ -295,9 +337,10 @@
             statusMessage.textContent = 'Checking...';
             statusMessage.style.color = 'lightgreen';
             submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
 
             try {
-                const data = await postForm(scriptURL, { action: 'login', email });
+                const data = await postForm(scriptURL, { action: 'login', email, password });
                 console.log('Login response:', data);
                 if (data.result === 'success') {
                     statusMessage.textContent = 'Login successful! Redirecting...';
@@ -312,7 +355,7 @@
                         statusMessage.style.color = 'orange';
                     }
                 } else {
-                    statusMessage.textContent = data.message || 'Login failed. Please check your email.';
+                    statusMessage.textContent = data.message || 'Login failed. Please check your credentials.';
                     statusMessage.style.color = 'orange';
                 }
             } catch (error) {
@@ -321,6 +364,7 @@
                 statusMessage.style.color = 'red';
             } finally {
                 submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
             }
         });
 
@@ -330,6 +374,18 @@
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     link.click();
+                }
+            });
+        });
+
+        // Real-time validation example for email
+        const emailInputs = [document.getElementById('email'), document.getElementById('loginEmail')];
+        emailInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim())) {
+                    input.setCustomValidity('Invalid email format.');
+                } else {
+                    input.setCustomValidity('');
                 }
             });
         });
