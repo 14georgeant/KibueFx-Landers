@@ -185,11 +185,28 @@
                     mode: 'cors'
                 });
                 if (!response.ok) {
-                    throw new Error(`Network response was not ok (${response.status})`);
+                    throw new Error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
                 }
-                return await response.json();
+                // Attempt to parse JSON, handle non-JSON responses
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return await response.json();
+                } else {
+                    throw new Error('Invalid response format: Expected JSON');
+                }
             } catch (error) {
+                console.error('Fetch error:', error);
                 throw error;
+            }
+        }
+
+        // Check if redirect target exists
+        async function checkRedirect(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch {
+                return false;
             }
         }
 
@@ -228,19 +245,26 @@
 
             try {
                 const data = await postForm(scriptURL, { action: 'signup', name, email });
+                console.log('Signup response:', data);
                 if (data.result === 'error') {
                     statusMessage.textContent = data.message || 'Signup error.';
                     statusMessage.style.color = 'orange';
                 } else {
                     statusMessage.textContent = 'Signup successful! Redirecting...';
                     statusMessage.style.color = 'lightgreen';
-                    setTimeout(() => {
-                        window.location.href = 'gloss.html';
-                    }, 1000);
+                    const redirectOk = await checkRedirect('gloss.html');
+                    if (redirectOk) {
+                        setTimeout(() => {
+                            window.location.href = 'gloss.html';
+                        }, 1000);
+                    } else {
+                        statusMessage.textContent = 'Signup successful, but redirect page not found.';
+                        statusMessage.style.color = 'orange';
+                    }
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
-                statusMessage.textContent = 'Error submitting form.';
+                console.error('Signup fetch error:', error);
+                statusMessage.textContent = `Error submitting form: ${error.message}`;
                 statusMessage.style.color = 'red';
             } finally {
                 submitBtn.disabled = false;
@@ -274,19 +298,26 @@
 
             try {
                 const data = await postForm(scriptURL, { action: 'login', email });
+                console.log('Login response:', data);
                 if (data.result === 'success') {
                     statusMessage.textContent = 'Login successful! Redirecting...';
                     statusMessage.style.color = 'lightgreen';
-                    setTimeout(() => {
-                        window.location.href = 'gloss.html';
-                    }, 1000);
+                    const redirectOk = await checkRedirect('gloss.html');
+                    if (redirectOk) {
+                        setTimeout(() => {
+                            window.location.href = 'gloss.html';
+                        }, 1000);
+                    } else {
+                        statusMessage.textContent = 'Login successful, but redirect page not found.';
+                        statusMessage.style.color = 'orange';
+                    }
                 } else {
-                    statusMessage.textContent = data.message || 'Login failed.';
+                    statusMessage.textContent = data.message || 'Login failed. Please check your email.';
                     statusMessage.style.color = 'orange';
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
-                statusMessage.textContent = 'Error logging in.';
+                console.error('Login fetch error:', error);
+                statusMessage.textContent = `Error logging in: ${error.message}`;
                 statusMessage.style.color = 'red';
             } finally {
                 submitBtn.disabled = false;
