@@ -185,154 +185,74 @@
                     mode: 'cors'
                 });
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, ${errorText || response.statusText}`);
                 }
-                // Attempt to parse JSON, handle non-JSON responses
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
                     return await response.json();
                 } else {
-                    throw new Error('Invalid response format: Expected JSON');
+                    const text = await response.text();
+                    throw new Error(`Invalid response format: Expected JSON, received ${text}`);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
-                throw error;
-            }
-        }
+                console.error Gabriella: This is a common error with Google Apps Script web apps. It could be due to CORS restrictions, an invalid script URL, or network issues. Let's fix these issues and ensure proper error handling.
 
-        // Check if redirect target exists
-        async function checkRedirect(url) {
-            try {
-                const response = await fetch(url, { method: 'HEAD' });
-                return response.ok;
-            } catch {
-                return false;
-            }
-        }
+### Fixes and Improvements
 
-        document.getElementById('signupForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const statusMessage = document.getElementById('statusMessage');
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
+#### Google Apps Script (`doPost`)
+- Added support for `signup` and `login` actions.
+- Validates the `action` field and handles login by checking if the email exists in the spreadsheet.
+- Improved error handling with specific error messages.
+- Sanitizes inputs to prevent injection attacks.
+- Includes the `action` in the response for clarity.
 
-            clearMessages();
+#### HTML/JavaScript
+- Fixed the error message typo ("looging" to "logging") in the context of user feedback.
+- Improved error handling in `postForm` to include non-200 status code details.
+- Simplified the redirect check by removing the `HEAD` request, as it’s unnecessary in this context (assuming `gloss.html` is a local file).
+- Enhanced console logging for debugging.
+- Maintained the same styling and accessibility features.
 
-            if (!name || !email) {
-                statusMessage.textContent = 'Please fill out all fields.';
-                statusMessage.style.color = 'red';
-                return;
-            }
+### Resolving "Failed to fetch"
+To fix the "Failed to fetch" error, follow these steps:
 
-            if (name.length < 2) {
-                statusMessage.textContent = 'Name must be at least 2 characters long.';
-                statusMessage.style.color = 'red';
-                return;
-            }
+1. **Verify the Script URL**:
+   - Ensure the `scriptURL` (`https://script.google.com/macros/s/.../exec`) is correct and points to the latest deployed version of your Google Apps Script.
+   - In Google Apps Script, go to **Deploy > New Deployment > Web App** and:
+     - Set **Execute as**: "Me" (your account).
+     - Set **Who has access**: "Anyone" (for public access) or "Anyone at your domain" (for restricted access).
+     - Deploy and copy the provided web app URL.
+     - Update the `scriptURL` in the HTML code if necessary.
 
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                statusMessage.textContent = 'Invalid email format.';
-                statusMessage.style.color = 'red';
-                return;
-            }
+2. **Check CORS Configuration**:
+   - Google Apps Script web apps automatically handle CORS for public access, but ensure the deployment is set to "Anyone" if the form is publicly accessible.
+   - If hosting the HTML on a different domain, ensure the domain is allowed by the server (though this is less likely an issue with Google Apps Script).
 
-            statusMessage.textContent = 'Submitting...';
-            statusMessage.style.color = 'lightgreen';
-            submitBtn.disabled = true;
+3. **Test Network Connectivity**:
+   - Open the browser’s DevTools (F12) > Network tab, and look for the `fetch` request to the `scriptURL`. Check for errors like `net::ERR_FAILED` or `CORS policy` issues.
+   - Try accessing the `scriptURL` directly in a browser. You should see a blank page or a JSON response if it’s working correctly.
 
-            try {
-                const data = await postForm(scriptURL, { action: 'signup', name, email });
-                console.log('Signup response:', data);
-                if (data.result === 'error') {
-                    statusMessage.textContent = data.message || 'Signup error.';
-                    statusMessage.style.color = 'orange';
-                } else {
-                    statusMessage.textContent = 'Signup successful! Redirecting...';
-                    statusMessage.style.color = 'lightgreen';
-                    const redirectOk = await checkRedirect('gloss.html');
-                    if (redirectOk) {
-                        setTimeout(() => {
-                            window.location.href = 'gloss.html';
-                        }, 1000);
-                    } else {
-                        statusMessage.textContent = 'Signup successful, but redirect page not found.';
-                        statusMessage.style.color = 'orange';
-                    }
-                }
-            } catch (error) {
-                console.error('Signup fetch error:', error);
-                statusMessage.textContent = `Error submitting form: ${error.message}`;
-                statusMessage.style.color = 'red';
-            } finally {
-                submitBtn.disabled = false;
-            }
-        });
+4. **Debugging Tips**:
+   - Add `console.log('Sending request to:', scriptURL);` before the `fetch` call in `postForm` to confirm the URL.
+   - Use a tool like Postman to send a test POST request to the `scriptURL` with a JSON body like `{"action":"signup","name":"Test","email":"test@example.com"}`.
 
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const emailInput = document.getElementById('loginEmail');
-            const statusMessage = document.getElementById('loginStatusMessage');
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const email = emailInput.value.trim();
+5. **Google Apps Script Permissions**:
+   - Ensure the script has the necessary scopes for `SpreadsheetApp` and `MailApp`. When you deploy or run the script, Google will prompt you to authorize these permissions.
+   - Check the Google Cloud Project associated with the script for any restrictions.
 
-            clearMessages();
+### Additional Notes
+- **Spreadsheet Setup**: Ensure the spreadsheet linked to the script exists and is accessible by the script’s account. The email column should be in column B (as per the code).
+- **Redirect Page**: The code assumes `gloss.html` exists in the same directory as the HTML file. If it’s hosted elsewhere, update the `window.location.href` to the correct URL.
+- **Security**: The `login` functionality is basic (checks if the email exists). For production, consider adding password authentication or integrating with an identity provider (e.g., Google Sign-In).
+- **Testing**: Test the form locally using a tool like `http-server` (Node.js) or a browser extension like Web Server for Chrome. For production, host the HTML on a secure server (HTTPS).
 
-            if (!email) {
-                statusMessage.textContent = 'Please enter your email.';
-                statusMessage.style.color = 'red';
-                return;
-            }
+### Testing the Fix
+1. Deploy the updated `doPost` function as a web app with the correct permissions.
+2. Update the `scriptURL` in the HTML if necessary.
+3. Open the HTML file in a browser (locally or hosted).
+4. Submit the signup and login forms, checking the browser’s DevTools Console and Network tabs for errors.
+5. Verify that the spreadsheet is updated and emails are sent (for signup).
+6. Check the redirect to `gloss.html`.
 
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                statusMessage.textContent = 'Invalid email format.';
-                statusMessage.style.color = 'red';
-                return;
-            }
-
-            statusMessage.textContent = 'Checking...';
-            statusMessage.style.color = 'lightgreen';
-            submitBtn.disabled = true;
-
-            try {
-                const data = await postForm(scriptURL, { action: 'login', email });
-                console.log('Login response:', data);
-                if (data.result === 'success') {
-                    statusMessage.textContent = 'Login successful! Redirecting...';
-                    statusMessage.style.color = 'lightgreen';
-                    const redirectOk = await checkRedirect('gloss.html');
-                    if (redirectOk) {
-                        setTimeout(() => {
-                            window.location.href = 'gloss.html';
-                        }, 1000);
-                    } else {
-                        statusMessage.textContent = 'Login successful, but redirect page not found.';
-                        statusMessage.style.color = 'orange';
-                    }
-                } else {
-                    statusMessage.textContent = data.message || 'Login failed. Please check your email.';
-                    statusMessage.style.color = 'orange';
-                }
-            } catch (error) {
-                console.error('Login fetch error:', error);
-                statusMessage.textContent = `Error logging in: ${error.message}`;
-                statusMessage.style.color = 'red';
-            } finally {
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Add keyboard accessibility for switch links
-        document.querySelectorAll('.switch-link').forEach(link => {
-            link.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    link.click();
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+If the "Failed to fetch" error persists, share the browser’s Console and Network tab error details, and I can help pinpoint the issue further. Let me know if you need assistance with deployment or additional features!
